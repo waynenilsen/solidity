@@ -16,6 +16,7 @@ Language Features:
  * Code generator: Implementing copying structs from calldata to storage.
 
 Compiler Features:
+ * General: Option to stop compilation after parsing stage. Can be used with ``solc --stop-after parsing``
  * SMTChecker: Add underflow and overflow as verification conditions in the CHC engine.
  * SMTChecker: Support bitwise or, xor and not operators.
  * SMTChecker: Support conditional operator.
