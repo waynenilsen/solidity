@@ -1253,12 +1253,14 @@ bool ContractCompiler::visit(PlaceholderStatement const& _placeholderStatement)
 
 bool ContractCompiler::visit(Block const& _block)
 {
+	m_context.pushCheckedArithmetics(!_block.unchecked());
 	storeStackHeight(&_block);
 	return true;
 }
 
 void ContractCompiler::endVisit(Block const& _block)
 {
+	m_context.popCheckedArithmetics();
 	// Frees local variables declared in the scope of this block.
 	popScopedVariables(&_block);
 }
@@ -1332,6 +1334,9 @@ void ContractCompiler::appendModifierOrFunctionCode()
 
 	if (codeBlock)
 	{
+		m_context.pushCheckedArithmetics(true);
+		// TODO test that checks are also applied for initializing state variables
+
 		m_returnTags.emplace_back(m_context.newTag(), m_context.stackHeight());
 		codeBlock->accept(*this);
 
@@ -1342,6 +1347,8 @@ void ContractCompiler::appendModifierOrFunctionCode()
 		CompilerUtils(m_context).popStackSlots(stackSurplus);
 		for (auto var: addedVariables)
 			m_context.removeVariable(*var);
+
+		m_context.popCheckedArithmetics();
 	}
 	m_modifierDepth--;
 	m_context.setModifierDepth(m_modifierDepth);
