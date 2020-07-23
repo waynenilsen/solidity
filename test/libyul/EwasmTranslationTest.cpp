@@ -101,6 +101,7 @@ string EwasmTranslationTest::interpret()
 	InterpreterState state;
 	state.maxTraceSize = 10000;
 	state.maxSteps = 1000000;
+	state.maxExprNesting = 60;
 	try
 	{
 		Interpreter::run(state, WasmDialect{}, *m_object->code);
