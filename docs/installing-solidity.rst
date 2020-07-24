@@ -225,7 +225,7 @@ The following C++ compilers and their minimum versions can build the Solidity co
 
 - `GCC <https://gcc.gnu.org>`_, version 5+
 - `Clang <https://clang.llvm.org/>`_, version 3.4+
-- `MSVC <https://docs.microsoft.com/en-us/cpp/?view=vs-2019>`_, version 2017+
+- `MSVC <https://visualstudio.microsoft.com/vs/>`_, version 2019+
 
 Prerequisites - macOS
 ---------------------
@@ -257,29 +257,29 @@ You need to install the following dependencies for Windows builds of Solidity:
 +-----------------------------------+-------------------------------------------------------+
 | Software                          | Notes                                                 |
 +===================================+=======================================================+
-| `Visual Studio 2017 Build Tools`_ | C++ compiler                                          |
+| `Visual Studio 2019 Build Tools`_ | C++ compiler                                          |
 +-----------------------------------+-------------------------------------------------------+
-| `Visual Studio 2017`_  (Optional) | C++ compiler and dev environment.                     |
+| `Visual Studio 2019`_  (Optional) | C++ compiler and dev environment.                     |
 +-----------------------------------+-------------------------------------------------------+
 
 If you already have one IDE and only need the compiler and libraries,
-you could install Visual Studio 2017 Build Tools.
+you could install Visual Studio 2019 Build Tools.
 
-Visual Studio 2017 provides both IDE and necessary compiler and libraries.
-So if you have not got an IDE and prefer to develop solidity, Visual Studio 2017
+Visual Studio 2019 provides both IDE and necessary compiler and libraries.
+So if you have not got an IDE and prefer to develop solidity, Visual Studio 2019
 may be a choice for you to get everything setup easily.
 
 Here is the list of components that should be installed
-in Visual Studio 2017 Build Tools or Visual Studio 2017:
+in Visual Studio 2019 Build Tools or Visual Studio 2019:
 
 * Visual Studio C++ core features
-* VC++ 2017 v141 toolset (x86,x64)
+* VC++ 2019 v141 toolset (x86,x64)
 * Windows Universal CRT SDK
 * Windows 8.1 SDK
 * C++/CLI support
 
-.. _Visual Studio 2017: https://www.visualstudio.com/vs/
-.. _Visual Studio 2017 Build Tools: https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017
+.. _Visual Studio 2019: https://www.visualstudio.com/vs/
+.. _Visual Studio 2019 Build Tools: https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019
 
 Dependencies Helper Script
 --------------------------
@@ -357,7 +357,7 @@ And for Windows:
 
     mkdir build
     cd build
-    cmake -G "Visual Studio 15 2017 Win64" ..
+    cmake -G "Visual Studio 16 2019 Win64" ..
 
 This latter set of instructions should result in the creation of
 **solidity.sln** in that build directory.  Double-clicking on that file

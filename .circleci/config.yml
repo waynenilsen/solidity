@@ -27,6 +27,9 @@ parameters:
     type: string
     default: "solbuildpackpusher/solidity-buildpack-deps@sha256:d557d015918c3cf68b0d22839bab41013f0757b651a7fef21595f89721dbebcc"
 
+orbs:
+  win: circleci/windows@2.2.0
+
 defaults:
 
   # --------------------------------------------------------------------------
@@ -63,6 +66,10 @@ defaults:
   - artifacts_solc: &artifacts_solc
       path: build/solc/solc
       destination: solc
+
+  - artifact_solc_windows: &artifact_solc_windows
+      path: solidity-windows.zip
+      destination: solidity-windows.zip
 
   # compiled tool executable target
   - artifacts_tools: &artifacts_tools
@@ -261,6 +268,44 @@ defaults:
 
 # -----------------------------------------------------------------------------------------------
 jobs:
+
+  b_win:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - run: systeminfo
+      - run:
+          name: "Installing dependencies"
+          command: .\.circleci\win_install_dependencies.ps1
+      - run:
+          name: "Building Solidity"
+          command: .\scripts\ci\build_windows.ps1 Debug
+      - run:
+          name: "Running soltest"
+          command: .\build\test\Debug\soltest.exe --show-progress -- --testpath .\test --no-smt --evmonepath=evmone\bin\evmone.dll
+
+  b_win_release:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - run: systeminfo
+      - run:
+          name: "Installing dependencies"
+          command: .\.circleci\win_install_dependencies.ps1
+      - run:
+          name: "Building Solidity"
+          command: .\scripts\ci\build_windows.ps1 Release
+      - run:
+          name: "Running soltest"
+          command: .\build\test\Release\soltest.exe --show-progress -- --testpath .\test --no-smt --evmonepath=evmone\bin\evmone.dll
+      - run:
+          name: "Creating Zip package"
+          command: .\scripts\create_package_windows.ps1
+      - store_artifacts: *artifact_solc_windows
 
   chk_spelling:
     docker:
@@ -856,6 +901,9 @@ workflows:
 
   main:
     jobs:
+      - b_win: *workflow_trigger_on_tags
+      - b_win_release: *workflow_trigger_on_tags
+
       # basic checks
       - chk_spelling: *workflow_trigger_on_tags
       - chk_coding_style: *workflow_trigger_on_tags
