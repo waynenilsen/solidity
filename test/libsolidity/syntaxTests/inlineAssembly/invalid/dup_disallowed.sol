@@ -24,20 +24,20 @@ contract C {
 }
 // ----
 // DeclarationError 4619: (75-79): Function not found.
-// DeclarationError 4619: (94-98): Function not found.
-// DeclarationError 4619: (113-117): Function not found.
-// DeclarationError 4619: (132-136): Function not found.
-// DeclarationError 4619: (151-155): Function not found.
-// DeclarationError 4619: (170-174): Function not found.
-// DeclarationError 4619: (189-193): Function not found.
-// DeclarationError 4619: (208-212): Function not found.
-// DeclarationError 4619: (227-231): Function not found.
-// DeclarationError 4619: (246-250): Function not found.
-// DeclarationError 4619: (265-270): Function not found.
-// DeclarationError 4619: (285-290): Function not found.
-// DeclarationError 4619: (305-310): Function not found.
-// DeclarationError 4619: (325-330): Function not found.
-// DeclarationError 4619: (345-350): Function not found.
-// DeclarationError 4619: (365-370): Function not found.
-// DeclarationError 4619: (385-390): Function not found.
+// TypeError 5017: (94-98): The identifier "dup1" is reserved and can not be used.
+// TypeError 5017: (113-117): The identifier "dup2" is reserved and can not be used.
+// TypeError 5017: (132-136): The identifier "dup3" is reserved and can not be used.
+// TypeError 5017: (151-155): The identifier "dup4" is reserved and can not be used.
+// TypeError 5017: (170-174): The identifier "dup5" is reserved and can not be used.
+// TypeError 5017: (189-193): The identifier "dup6" is reserved and can not be used.
+// TypeError 5017: (208-212): The identifier "dup7" is reserved and can not be used.
+// TypeError 5017: (227-231): The identifier "dup8" is reserved and can not be used.
+// TypeError 5017: (246-250): The identifier "dup9" is reserved and can not be used.
+// TypeError 5017: (265-270): The identifier "dup10" is reserved and can not be used.
+// TypeError 5017: (285-290): The identifier "dup11" is reserved and can not be used.
+// TypeError 5017: (305-310): The identifier "dup12" is reserved and can not be used.
+// TypeError 5017: (325-330): The identifier "dup13" is reserved and can not be used.
+// TypeError 5017: (345-350): The identifier "dup14" is reserved and can not be used.
+// TypeError 5017: (365-370): The identifier "dup15" is reserved and can not be used.
+// TypeError 5017: (385-390): The identifier "dup16" is reserved and can not be used.
 // DeclarationError 4619: (405-410): Function not found.

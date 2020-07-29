@@ -747,8 +747,8 @@ BOOST_AUTO_TEST_CASE(shift_constantinople_warning)
 
 BOOST_AUTO_TEST_CASE(jump_error)
 {
-	CHECK_PARSE_WARNING("{ jump(44) }", DeclarationError, "Function not found.");
-	CHECK_PARSE_WARNING("{ jumpi(44, 2) }", DeclarationError, "Function not found.");
+	CHECK_PARSE_WARNING("{ jump(44) }", TypeError, "The identifier \"jump\" is reserved and can not be used.");
+	CHECK_PARSE_WARNING("{ jumpi(44, 2) }", TypeError, "The identifier \"jumpi\" is reserved and can not be used.");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

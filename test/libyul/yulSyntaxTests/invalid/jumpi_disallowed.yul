@@ -2,4 +2,4 @@
     jumpi(2, 1)
 }
 // ----
-// DeclarationError 4619: (6-11): Function not found.
+// TypeError 5017: (6-11): The identifier "jumpi" is reserved and can not be used.

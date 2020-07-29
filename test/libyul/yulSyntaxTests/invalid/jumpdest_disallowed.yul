@@ -2,4 +2,4 @@
     jumpdest()
 }
 // ----
-// DeclarationError 4619: (6-14): Function not found.
+// TypeError 5017: (6-14): The identifier "jumpdest" is reserved and can not be used.

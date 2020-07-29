@@ -7,3 +7,4 @@
 // ====
 // dialect: evm
 // ----
+// TypeError 5017: (6-18): The identifier "setimmutable" is reserved and can not be used.

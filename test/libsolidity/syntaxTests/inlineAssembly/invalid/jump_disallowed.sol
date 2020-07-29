@@ -6,4 +6,4 @@ contract C {
     }
 }
 // ----
-// DeclarationError 4619: (75-79): Function not found.
+// TypeError 5017: (75-79): The identifier "jump" is reserved and can not be used.

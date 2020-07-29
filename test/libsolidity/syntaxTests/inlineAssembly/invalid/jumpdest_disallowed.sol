@@ -6,4 +6,4 @@ contract C {
     }
 }
 // ----
-// DeclarationError 4619: (75-83): Function not found.
+// TypeError 5017: (75-83): The identifier "jumpdest" is reserved and can not be used.

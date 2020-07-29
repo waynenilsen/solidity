@@ -2,4 +2,4 @@
     jump(2)
 }
 // ----
-// DeclarationError 4619: (6-10): Function not found.
+// TypeError 5017: (6-10): The identifier "jump" is reserved and can not be used.

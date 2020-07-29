@@ -39,35 +39,35 @@ contract C {
 }
 // ----
 // DeclarationError 4619: (75-80): Function not found.
-// DeclarationError 4619: (95-100): Function not found.
-// DeclarationError 4619: (115-120): Function not found.
-// DeclarationError 4619: (135-140): Function not found.
-// DeclarationError 4619: (155-160): Function not found.
-// DeclarationError 4619: (175-180): Function not found.
-// DeclarationError 4619: (195-200): Function not found.
-// DeclarationError 4619: (215-220): Function not found.
-// DeclarationError 4619: (235-240): Function not found.
-// DeclarationError 4619: (255-260): Function not found.
-// DeclarationError 4619: (275-281): Function not found.
-// DeclarationError 4619: (296-302): Function not found.
-// DeclarationError 4619: (317-323): Function not found.
-// DeclarationError 4619: (338-344): Function not found.
-// DeclarationError 4619: (359-365): Function not found.
-// DeclarationError 4619: (380-386): Function not found.
-// DeclarationError 4619: (401-407): Function not found.
-// DeclarationError 4619: (422-428): Function not found.
-// DeclarationError 4619: (443-449): Function not found.
-// DeclarationError 4619: (464-470): Function not found.
-// DeclarationError 4619: (485-491): Function not found.
-// DeclarationError 4619: (506-512): Function not found.
-// DeclarationError 4619: (527-533): Function not found.
-// DeclarationError 4619: (548-554): Function not found.
-// DeclarationError 4619: (569-575): Function not found.
-// DeclarationError 4619: (590-596): Function not found.
-// DeclarationError 4619: (611-617): Function not found.
-// DeclarationError 4619: (632-638): Function not found.
-// DeclarationError 4619: (653-659): Function not found.
-// DeclarationError 4619: (674-680): Function not found.
-// DeclarationError 4619: (695-701): Function not found.
-// DeclarationError 4619: (716-722): Function not found.
-// DeclarationError 4619: (737-743): Function not found.
+// TypeError 5017: (95-100): The identifier "push1" is reserved and can not be used.
+// TypeError 5017: (115-120): The identifier "push2" is reserved and can not be used.
+// TypeError 5017: (135-140): The identifier "push3" is reserved and can not be used.
+// TypeError 5017: (155-160): The identifier "push4" is reserved and can not be used.
+// TypeError 5017: (175-180): The identifier "push5" is reserved and can not be used.
+// TypeError 5017: (195-200): The identifier "push6" is reserved and can not be used.
+// TypeError 5017: (215-220): The identifier "push7" is reserved and can not be used.
+// TypeError 5017: (235-240): The identifier "push8" is reserved and can not be used.
+// TypeError 5017: (255-260): The identifier "push9" is reserved and can not be used.
+// TypeError 5017: (275-281): The identifier "push10" is reserved and can not be used.
+// TypeError 5017: (296-302): The identifier "push11" is reserved and can not be used.
+// TypeError 5017: (317-323): The identifier "push12" is reserved and can not be used.
+// TypeError 5017: (338-344): The identifier "push13" is reserved and can not be used.
+// TypeError 5017: (359-365): The identifier "push14" is reserved and can not be used.
+// TypeError 5017: (380-386): The identifier "push15" is reserved and can not be used.
+// TypeError 5017: (401-407): The identifier "push16" is reserved and can not be used.
+// TypeError 5017: (422-428): The identifier "push17" is reserved and can not be used.
+// TypeError 5017: (443-449): The identifier "push18" is reserved and can not be used.
+// TypeError 5017: (464-470): The identifier "push19" is reserved and can not be used.
+// TypeError 5017: (485-491): The identifier "push20" is reserved and can not be used.
+// TypeError 5017: (506-512): The identifier "push21" is reserved and can not be used.
+// TypeError 5017: (527-533): The identifier "push22" is reserved and can not be used.
+// TypeError 5017: (548-554): The identifier "push23" is reserved and can not be used.
+// TypeError 5017: (569-575): The identifier "push24" is reserved and can not be used.
+// TypeError 5017: (590-596): The identifier "push25" is reserved and can not be used.
+// TypeError 5017: (611-617): The identifier "push26" is reserved and can not be used.
+// TypeError 5017: (632-638): The identifier "push27" is reserved and can not be used.
+// TypeError 5017: (653-659): The identifier "push28" is reserved and can not be used.
+// TypeError 5017: (674-680): The identifier "push29" is reserved and can not be used.
+// TypeError 5017: (695-701): The identifier "push30" is reserved and can not be used.
+// TypeError 5017: (716-722): The identifier "push31" is reserved and can not be used.
+// TypeError 5017: (737-743): The identifier "push32" is reserved and can not be used.
