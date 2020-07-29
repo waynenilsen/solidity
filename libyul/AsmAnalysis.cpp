@@ -601,8 +601,18 @@ bool AsmAnalyzer::validateInstructions(std::string const& _instructionIdentifier
 	auto const builtin = EVMDialect::strictAssemblyForEVM(EVMVersion{}).builtin(YulString(_instructionIdentifier));
 	if (builtin && builtin->instruction.has_value())
 		return validateInstructions(builtin->instruction.value(), _location);
-	else
-		return false;
+
+	if (m_dialect.reservedIdentifier(YulString(_instructionIdentifier)))
+	{
+		m_errorReporter.typeError(
+			5017_error,
+			_location,
+			"The identifier \"" + _instructionIdentifier + "\" is reserved and can not be used."
+		);
+		return true;
+	}
+
+	return false;
 }
 
 bool AsmAnalyzer::validateInstructions(evmasm::Instruction _instr, SourceLocation const& _location)
