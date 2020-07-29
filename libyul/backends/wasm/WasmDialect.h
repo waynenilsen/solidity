@@ -46,6 +46,7 @@ struct WasmDialect: public Dialect
 	WasmDialect();
 
 	BuiltinFunction const* builtin(YulString _name) const override;
+	bool reservedIdentifier(YulString _name) const override;
 	BuiltinFunction const* discardFunction(YulString _type) const override;
 	BuiltinFunction const* equalityFunction(YulString _type) const override;
 	BuiltinFunction const* booleanNegationFunction() const override { return builtin("i32.eqz"_yulstring); }

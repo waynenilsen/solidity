@@ -143,6 +143,12 @@ BuiltinFunction const* WasmDialect::builtin(YulString _name) const
 		return nullptr;
 }
 
+bool WasmDialect::reservedIdentifier(YulString _name) const
+{
+	// NOTE: There are no special reserved identifiers besides the builtins yet.
+	return m_functions.count(_name) != 0;
+}
+
 BuiltinFunction const* WasmDialect::discardFunction(YulString _type) const
 {
 	if (_type == "i32"_yulstring)

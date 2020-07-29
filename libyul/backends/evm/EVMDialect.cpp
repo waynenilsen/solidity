@@ -109,6 +109,27 @@ pair<YulString, BuiltinFunctionForEVM> createFunction(
 	return {name, f};
 }
 
+set<YulString> createReservedIdentifiers(bool _objectAccess)
+{
+	set<YulString> reserved;
+	for (auto const& instr: evmasm::c_instructions)
+	{
+		string name = instr.first;
+		transform(name.begin(), name.end(), name.begin(), [](unsigned char _c) { return tolower(_c); });
+		reserved.emplace(name);
+	}
+	if (_objectAccess)
+	{
+		reserved.emplace("linkersymbol");
+		reserved.emplace("datasize");
+		reserved.emplace("dataoffset");
+		reserved.emplace("datacopy");
+		reserved.emplace("setimmutable");
+		reserved.emplace("loadimmutable");
+	}
+	return reserved;
+}
+
 map<YulString, BuiltinFunctionForEVM> createBuiltins(langutil::EVMVersion _evmVersion, bool _objectAccess)
 {
 	map<YulString, BuiltinFunctionForEVM> builtins;
@@ -248,7 +269,8 @@ map<YulString, BuiltinFunctionForEVM> createBuiltins(langutil::EVMVersion _evmVe
 EVMDialect::EVMDialect(langutil::EVMVersion _evmVersion, bool _objectAccess):
 	m_objectAccess(_objectAccess),
 	m_evmVersion(_evmVersion),
-	m_functions(createBuiltins(_evmVersion, _objectAccess))
+	m_functions(createBuiltins(_evmVersion, _objectAccess)),
+	m_reserved(createReservedIdentifiers(_objectAccess))
 {
 }
 
@@ -259,6 +281,11 @@ BuiltinFunctionForEVM const* EVMDialect::builtin(YulString _name) const
 		return &it->second;
 	else
 		return nullptr;
+}
+
+bool EVMDialect::reservedIdentifier(YulString _name) const
+{
+	return m_reserved.count(_name) != 0;
 }
 
 EVMDialect const& EVMDialect::strictAssemblyForEVM(langutil::EVMVersion _version)
