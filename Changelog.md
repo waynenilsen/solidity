@@ -2,7 +2,7 @@
 
 Language Features:
  * Allow function definitions outside of contracts, behaving much like internal library functions.
-
+ * Yul: Disallow the use of reserved identifiers, such as EVM instructions, even if they are not available in the given dialect / EVM version.
 
 Compiler Features:
  * SMTChecker: Add underflow and overflow as verification conditions in the CHC engine.
