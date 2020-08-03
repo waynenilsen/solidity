@@ -2,12 +2,9 @@
 {
 	function f() -> a { }
 	let b := sub(f(), f())
+	sstore(b, 8)
 }
 // ----
 // step: expressionSimplifier
 //
-// {
-//     function f() -> a
-//     { }
-//     let b := sub(f(), f())
-// }
+// { sstore(0, 8) }
