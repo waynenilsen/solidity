@@ -475,7 +475,7 @@ bool ASTJsonConverter::visit(UserDefinedTypeName const& _node)
 {
 	setJsonNode(_node, "UserDefinedTypeName", {
 		make_pair("pathNode", toJson(*_node.pathNode())),
-		make_pair("referencedDeclaration", idOrNull(_node.annotation().referencedDeclaration)),
+		make_pair("referencedDeclaration", idOrNull(_node.pathNode()->annotation().referencedDeclaration)),
 		make_pair("typeDescriptions", typePointerToJson(_node.annotation().type, true))
 	});
 	return false;

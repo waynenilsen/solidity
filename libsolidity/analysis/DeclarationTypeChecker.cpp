@@ -133,7 +133,7 @@ void DeclarationTypeChecker::endVisit(UserDefinedTypeName const& _typeName)
 	if (_typeName.annotation().type)
 		return;
 
-	Declaration const* declaration = _typeName.annotation().referencedDeclaration;
+	Declaration const* declaration = _typeName.pathNode()->annotation().referencedDeclaration;
 	solAssert(declaration, "");
 
 	if (StructDefinition const* structDef = dynamic_cast<StructDefinition const*>(declaration))
@@ -379,13 +379,12 @@ void DeclarationTypeChecker::endVisit(VariableDeclaration const& _variable)
 	}
 
 	_variable.annotation().type = type;
-
 }
 
 void DeclarationTypeChecker::endVisit(UsingForDirective const& _usingFor)
 {
 	ContractDefinition const* library = dynamic_cast<ContractDefinition const*>(
-		_usingFor.libraryName().annotation().referencedDeclaration
+		_usingFor.libraryName().pathNode()->annotation().referencedDeclaration
 	);
 	if (!library || !library->isLibrary())
 		m_errorReporter.fatalTypeError(4357_error, _usingFor.libraryName().location(), "Library name expected.");

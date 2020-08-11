@@ -447,7 +447,7 @@ MemberList::MemberMap Type::boundFunctions(Type const& _type, ASTNode const& _sc
 		)
 			continue;
 		auto const& library = dynamic_cast<ContractDefinition const&>(
-			*ufd->libraryName().annotation().referencedDeclaration
+			*ufd->libraryName().pathNode()->annotation().referencedDeclaration
 		);
 		for (FunctionDefinition const* function: library.definedFunctions())
 		{

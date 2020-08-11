@@ -238,12 +238,6 @@ struct IdentifierPathAnnotation: TypeNameAnnotation
 	Declaration const* referencedDeclaration = nullptr;
 };
 
-struct UserDefinedTypeNameAnnotation: TypeNameAnnotation
-{
-	/// Referenced declaration, set during reference resolution stage.
-	Declaration const* referencedDeclaration = nullptr;
-};
-
 struct ExpressionAnnotation: ASTAnnotation
 {
 	/// Inferred type of the expression.

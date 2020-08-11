@@ -1,5 +1,8 @@
 ### 0.8.0 (unreleased)
 
+Language Features:
+ * Super constructors can now be called using the member notation e.g.  ``M.C(123)``.
+ * New AST Node ``IdentifierPath`` replacing in many places the ``UserDefinedTypeName``
 
 
 ### 0.7.2 (unreleased)

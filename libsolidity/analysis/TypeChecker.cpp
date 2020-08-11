@@ -351,6 +351,9 @@ bool TypeChecker::visit(FunctionDefinition const& _function)
 	if (_function.overrides() && _function.isFree())
 		m_errorReporter.syntaxError(1750_error, _function.location(), "Free functions cannot override.");
 
+	if (!_function.modifiers().empty() && _function.isFree())
+		m_errorReporter.syntaxError(5811_error, _function.location(), "Free functions cannot have modifiers.");
+
 	if (_function.isPayable())
 	{
 		if (_function.libraryFunction())
@@ -2481,7 +2484,7 @@ void TypeChecker::endVisit(NewExpression const& _newExpression)
 
 	if (auto contractName = dynamic_cast<UserDefinedTypeName const*>(&_newExpression.typeName()))
 	{
-		auto contract = dynamic_cast<ContractDefinition const*>(&dereference(*contractName));
+		auto contract = dynamic_cast<ContractDefinition const*>(&dereference(*contractName->pathNode()));
 
 		if (!contract)
 			m_errorReporter.fatalTypeError(5540_error, _newExpression.location(), "Identifier is not a contract.");
@@ -3096,6 +3099,12 @@ bool TypeChecker::visit(Identifier const& _identifier)
 	return false;
 }
 
+void TypeChecker::endVisit(UserDefinedTypeName const& _userDefinedTypeName)
+{
+	if (!_userDefinedTypeName.annotation().type)
+		_userDefinedTypeName.annotation().type = _userDefinedTypeName.pathNode()->annotation().referencedDeclaration->type();
+}
+
 void TypeChecker::endVisit(ElementaryTypeNameExpression const& _expr)
 {
 	_expr.annotation().type = TypeProvider::typeType(TypeProvider::fromElementaryTypeName(_expr.type().typeName(), _expr.type().stateMutability()));
@@ -3189,10 +3198,10 @@ Declaration const& TypeChecker::dereference(Identifier const& _identifier) const
 	return *_identifier.annotation().referencedDeclaration;
 }
 
-Declaration const& TypeChecker::dereference(UserDefinedTypeName const& _typeName) const
+Declaration const& TypeChecker::dereference(IdentifierPath const& _path) const
 {
-	solAssert(!!_typeName.annotation().referencedDeclaration, "Declaration not stored.");
-	return *_typeName.annotation().referencedDeclaration;
+	solAssert(!!_path.annotation().referencedDeclaration, "Declaration not stored.");
+	return *_path.annotation().referencedDeclaration;
 }
 
 bool TypeChecker::expectType(Expression const& _expression, Type const& _expectedType)
