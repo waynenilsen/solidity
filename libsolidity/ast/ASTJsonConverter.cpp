@@ -285,6 +285,15 @@ bool ASTJsonConverter::visit(ContractDefinition const& _node)
 	return false;
 }
 
+bool ASTJsonConverter::visit(IdentifierPath const& _node)
+{
+	setJsonNode(_node, "InheritanceSpecifier", {
+		make_pair("name", namePathToString(_node.path())),
+		make_pair("referencedDeclaration", idOrNull(_node.annotation().referencedDeclaration))
+	});
+	return false;
+}
+
 bool ASTJsonConverter::visit(InheritanceSpecifier const& _node)
 {
 	setJsonNode(_node, "InheritanceSpecifier", {
@@ -465,7 +474,7 @@ bool ASTJsonConverter::visit(ElementaryTypeName const& _node)
 bool ASTJsonConverter::visit(UserDefinedTypeName const& _node)
 {
 	setJsonNode(_node, "UserDefinedTypeName", {
-		make_pair("name", namePathToString(_node.namePath())),
+		make_pair("pathNode", toJson(*_node.pathNode())),
 		make_pair("referencedDeclaration", idOrNull(_node.annotation().referencedDeclaration)),
 		make_pair("typeDescriptions", typePointerToJson(_node.annotation().type, true))
 	});
