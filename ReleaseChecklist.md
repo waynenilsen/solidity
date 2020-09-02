@@ -32,7 +32,7 @@
 ### Homebrew and MacOS
  - [ ] Update the version and the hash (``sha256sum solidity_x.x.x.tar.gz``) in https://github.com/ethereum/homebrew-ethereum/blob/master/solidity.rb
  - [ ] Take the binary from the ``b_osx`` run of the released commit in circle-ci and add it to the release page as ``solc-macos``.
- - [ ] bump new homebrew formula 
+ - [ ] bump new homebrew formula
 ```
 brew bump-formula-pr --message="Update solidity to 0.7.1 with brew bump-formula-pr" --url="https://github.com/ethereum/solidity/releases/download/v0.7.1/solidity_0.7.1.tar.gz" --sha256="c69205d902ac8dd66f5aeaa78a08e5411cdb26a0b9479fcf44f394b7008b484c" solidity
 ```
