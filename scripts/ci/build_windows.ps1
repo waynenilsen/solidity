@@ -24,11 +24,9 @@
 # (c) 2020 solidity contributors.
 #------------------------------------------------------------------------------
 
-$build_type = $args[0]
-
 $env:Path = "$Env:ProgramFiles\CMake\bin;$env:Path"
 
-if ("$Env:CIRCLE_BRANCH" -eq "release" -or "$Env:CIRCLE_TAG" -ne "") {
+if ("$Env:FORCE_RELEASE" -eq "ON") {
 	Out-File -FilePath prerelease.txt
 } else {
 	$Timestamp = Get-Date -Format "yyyy.M.d"
@@ -42,7 +40,7 @@ cd build
 cmake .. -G "Visual Studio 16 2019" -DTESTS=ON -DBOOST_ROOT=C:/Libraries/boost_1_73_0
 cd ..
 
-cmake --build build/ --config $build_type --parallel 3
+cmake --build build/ --parallel 5
 
-# This is purely for inspecting list of generated executable files during built
+# This is purely for inspecting list of generated executable files during build
 Get-ChildItem -Path build/ -Recurse -Include "*.exe" | Select-Object -ExpandProperty FullName

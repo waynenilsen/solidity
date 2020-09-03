@@ -268,45 +268,6 @@ defaults:
 
 # -----------------------------------------------------------------------------------------------
 jobs:
-
-  b_win:
-    executor:
-      name: win/default
-      shell: powershell.exe
-    steps:
-      - checkout
-      - run: systeminfo
-      - run:
-          name: "Installing dependencies"
-          command: .\.circleci\win_install_dependencies.ps1
-      - run:
-          name: "Building Solidity"
-          command: .\scripts\ci\build_windows.ps1 Debug
-      - run:
-          name: "Running soltest"
-          command: .\build\test\Debug\soltest.exe --show-progress -- --testpath .\test --no-smt --evmonepath=evmone\bin\evmone.dll
-
-  b_win_release:
-    executor:
-      name: win/default
-      shell: powershell.exe
-    steps:
-      - checkout
-      - run: systeminfo
-      - run:
-          name: "Installing dependencies"
-          command: .\.circleci\win_install_dependencies.ps1
-      - run:
-          name: "Building Solidity"
-          command: .\scripts\ci\build_windows.ps1 Release
-      - run:
-          name: "Running soltest"
-          command: .\build\test\Release\soltest.exe --show-progress -- --testpath .\test --no-smt --evmonepath=evmone\bin\evmone.dll
-      - run:
-          name: "Creating Zip package"
-          command: .\scripts\create_package_windows.ps1
-      - store_artifacts: *artifact_solc_windows
-
   chk_spelling:
     docker:
       - image: circleci/python:3.6
@@ -568,6 +529,45 @@ jobs:
       - run: *gitter_notify_success
       - store_test_results: *store_test_results
       - store_artifacts: *artifacts_test_results
+
+  b_win: &b_win
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - run: systeminfo
+      - run:
+          name: "Installing dependencies"
+          command: .\.circleci\win_install_dependencies.ps1
+      - run:
+          name: "Building Solidity"
+          command: .\scripts\ci\build_windows.ps1
+      - run:
+          name: "Packaging"
+          command: .\scripts\create_package_windows.ps1
+      - store_artifacts: *artifact_solc_windows
+
+  b_win_release:
+    <<: *b_win
+    environment:
+      FORCE_RELEASE: ON
+
+  t_win: &t_win
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - attach_workspace:
+          at: build
+      - run:
+          name: "Running soltest"
+          command: .\build\test\Release\soltest.exe --show-progress -- --testpath .\test --no-smt --evmonepath=evmone\bin\evmone.dll
+      - store_artifacts: *artifacts_test_results
+
+  t_win_release: *t_win
+
 
   b_archlinux:
     docker:
@@ -901,9 +901,6 @@ workflows:
 
   main:
     jobs:
-      - b_win: *workflow_trigger_on_tags
-      - b_win_release: *workflow_trigger_on_tags
-
       # basic checks
       - chk_spelling: *workflow_trigger_on_tags
       - chk_coding_style: *workflow_trigger_on_tags
@@ -920,6 +917,18 @@ workflows:
       - b_archlinux: *workflow_trigger_on_tags
       - b_ubu_cxx20: *workflow_trigger_on_tags
       - b_ubu_ossfuzz: *workflow_trigger_on_tags
+
+      # Windows build and tests
+      - b_win: *workflow_trigger_on_tags
+      - b_win_release: *workflow_trigger_on_tags
+      - t_win:
+          <<: *workflow_trigger_on_tags
+          requires:
+            - b_win
+      - t_win_release:
+          <<: *workflow_trigger_on_tags
+          requires:
+            - b_win_release
 
       # OS/X build and tests
       - b_osx: *workflow_trigger_on_tags
