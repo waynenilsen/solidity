@@ -81,7 +81,7 @@ ASTJSONTest::ASTJSONTest(string const& _filename)
 	string sourceName;
 	string source;
 	string line;
-	string const sourceDelimiter("// ---- SOURCE: ");
+	string const sourceDelimiter("==== Source: ");
 	string const delimiter("// ----");
 	while (getline(file, line))
 	{
@@ -90,7 +90,9 @@ ASTJSONTest::ASTJSONTest(string const& _filename)
 			if (!sourceName.empty())
 				m_sources.emplace_back(sourceName, source);
 
-			sourceName = line.substr(sourceDelimiter.size(), string::npos);
+			sourceName = line.substr(
+				sourceDelimiter.size(),
+				line.size() - string(" ====").size() - sourceDelimiter.size());
 			source = string();
 		}
 		else if (!line.empty() && !boost::algorithm::starts_with(line, delimiter))
@@ -237,8 +239,6 @@ void ASTJSONTest::printSource(ostream& _stream, string const& _linePrefix, bool 
 {
 	for (auto const& source: m_sources)
 	{
-		if (m_sources.size() > 1 || source.first != "a")
-			_stream << _linePrefix << "// ---- SOURCE: " << source.first << endl << endl;
 		stringstream stream(source.second);
 		string line;
 		while (getline(stream, line))
