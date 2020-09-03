@@ -51,9 +51,11 @@ class ASTJsonConverter: public ASTConstVisitor
 public:
 	/// Create a converter to JSON for the given abstract syntax tree.
 	/// @a _legacy if true, use legacy format
+	/// @a _parseOnly if true, output only information that didn't require analysis
 	/// @a _sourceIndices is used to abbreviate source names in source locations.
 	explicit ASTJsonConverter(
 		bool _legacy,
+		bool _parseOnly,
 		std::map<std::string, unsigned> _sourceIndices = std::map<std::string, unsigned>()
 	);
 	/// Output the json representation of the AST to _stream.
@@ -189,6 +191,7 @@ private:
 	}
 
 	bool m_legacy = false; ///< if true, use legacy format
+	bool m_parseOnly = false; ///< if true, output only parser based information, not analysis dependent
 	bool m_inEvent = false; ///< whether we are currently inside an event or not
 	Json::Value m_currentValue;
 	std::map<std::string, unsigned> m_sourceIndices;

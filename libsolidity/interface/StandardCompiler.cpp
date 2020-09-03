@@ -1041,9 +1041,9 @@ Json::Value StandardCompiler::compileSolidity(StandardCompiler::InputsAndSetting
 			Json::Value sourceResult = Json::objectValue;
 			sourceResult["id"] = sourceIndex++;
 			if (isArtifactRequested(_inputsAndSettings.outputSelection, sourceName, "", "ast", wildcardMatchesExperimental))
-				sourceResult["ast"] = ASTJsonConverter(false, compilerStack.sourceIndices()).toJson(compilerStack.ast(sourceName));
+				sourceResult["ast"] = ASTJsonConverter(false, !analysisPerformed, compilerStack.sourceIndices()).toJson(compilerStack.ast(sourceName));
 			if (isArtifactRequested(_inputsAndSettings.outputSelection, sourceName, "", "legacyAST", wildcardMatchesExperimental))
-				sourceResult["legacyAST"] = ASTJsonConverter(true, compilerStack.sourceIndices()).toJson(compilerStack.ast(sourceName));
+				sourceResult["legacyAST"] = ASTJsonConverter(true, !analysisPerformed, compilerStack.sourceIndices()).toJson(compilerStack.ast(sourceName));
 			output["sources"][sourceName] = sourceResult;
 		}
 

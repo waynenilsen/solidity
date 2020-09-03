@@ -1,6 +1,5 @@
 {
   "absolutePath": "a",
-  "exportedSymbols": {},
   "id": 40,
   "nodeType": "SourceUnit",
   "nodes":
@@ -10,9 +9,7 @@
       "baseContracts": [],
       "contractDependencies": [],
       "contractKind": "contract",
-      "fullyImplemented": true,
       "id": 39,
-      "linearizedBaseContracts": [],
       "name": "C",
       "nodeType": "ContractDefinition",
       "nodes":
@@ -114,9 +111,6 @@
                     "typeDescriptions": {}
                   },
                   "isConstant": false,
-                  "isLValue": false,
-                  "isPure": false,
-                  "lValueRequested": false,
                   "nodeType": "IndexAccess",
                   "src": "164:6:1",
                   "typeDescriptions": {}
@@ -129,9 +123,6 @@
                 {
                   "id": 19,
                   "isConstant": false,
-                  "isLValue": false,
-                  "isPure": false,
-                  "lValueRequested": false,
                   "leftHandSide":
                   {
                     "id": 17,
@@ -206,9 +197,6 @@
                   {
                     "id": 24,
                     "isConstant": false,
-                    "isLValue": false,
-                    "isPure": false,
-                    "lValueRequested": false,
                     "nodeType": "ElementaryTypeNameExpression",
                     "src": "209:7:1",
                     "typeDescriptions": {},
@@ -223,9 +211,6 @@
                   },
                   "id": 26,
                   "isConstant": false,
-                  "isLValue": false,
-                  "isPure": false,
-                  "lValueRequested": false,
                   "names": [],
                   "nodeType": "FunctionCall",
                   "src": "209:13:1",
@@ -240,9 +225,6 @@
                 {
                   "id": 35,
                   "isConstant": false,
-                  "isLValue": false,
-                  "isPure": false,
-                  "lValueRequested": false,
                   "leftHandSide":
                   {
                     "baseExpression":
@@ -265,9 +247,6 @@
                       "typeDescriptions": {}
                     },
                     "isConstant": false,
-                    "isLValue": false,
-                    "isPure": false,
-                    "lValueRequested": false,
                     "nodeType": "IndexAccess",
                     "src": "232:4:1",
                     "typeDescriptions": {}
@@ -282,10 +261,7 @@
                         "hexValue": "30",
                         "id": 33,
                         "isConstant": false,
-                        "isLValue": false,
-                        "isPure": false,
                         "kind": "number",
-                        "lValueRequested": false,
                         "nodeType": "Literal",
                         "src": "247:1:1",
                         "typeDescriptions": {},
@@ -296,9 +272,6 @@
                     {
                       "id": 32,
                       "isConstant": false,
-                      "isLValue": false,
-                      "isPure": false,
-                      "lValueRequested": false,
                       "nodeType": "ElementaryTypeNameExpression",
                       "src": "239:7:1",
                       "typeDescriptions": {},
@@ -313,9 +286,6 @@
                     },
                     "id": 34,
                     "isConstant": false,
-                    "isLValue": false,
-                    "isPure": false,
-                    "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
                     "src": "239:10:1",

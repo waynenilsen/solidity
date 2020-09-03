@@ -1,6 +1,5 @@
 {
   "absolutePath": "a",
-  "exportedSymbols": {},
   "id": 13,
   "nodeType": "SourceUnit",
   "nodes":
@@ -10,9 +9,7 @@
       "baseContracts": [],
       "contractDependencies": [],
       "contractKind": "contract",
-      "fullyImplemented": true,
       "id": 12,
-      "linearizedBaseContracts": [],
       "name": "C",
       "nodeType": "ContractDefinition",
       "nodes":
@@ -59,10 +56,7 @@
                   "hexValue": "32",
                   "id": 5,
                   "isConstant": false,
-                  "isLValue": false,
-                  "isPure": false,
                   "kind": "number",
-                  "lValueRequested": false,
                   "nodeType": "Literal",
                   "src": "37:1:1",
                   "typeDescriptions": {},
@@ -76,9 +70,6 @@
                 {
                   "id": 8,
                   "isConstant": false,
-                  "isLValue": false,
-                  "isPure": false,
-                  "lValueRequested": false,
                   "nodeType": "UnaryOperation",
                   "operator": "++",
                   "prefix": false,
@@ -100,7 +91,6 @@
               }
             ]
           },
-          "functionSelector": "26121ff0",
           "id": 11,
           "implemented": true,
           "kind": "function",

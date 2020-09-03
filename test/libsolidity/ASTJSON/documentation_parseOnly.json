@@ -1,7 +1,6 @@
 [
 {
   "absolutePath": "a",
-  "exportedSymbols": {},
   "id": 3,
   "nodeType": "SourceUnit",
   "nodes":
@@ -18,9 +17,7 @@
         "src": "0:27:1",
         "text": "This contract is empty"
       },
-      "fullyImplemented": true,
       "id": 2,
-      "linearizedBaseContracts": [],
       "name": "C",
       "nodeType": "ContractDefinition",
       "nodes": [],
@@ -31,7 +28,6 @@
 },
 {
   "absolutePath": "b",
-  "exportedSymbols": {},
   "id": 6,
   "nodeType": "SourceUnit",
   "nodes":
@@ -48,9 +44,7 @@
         "src": "0:61:2",
         "text": "This contract is empty\nand has a line-breaking comment."
       },
-      "fullyImplemented": true,
       "id": 5,
-      "linearizedBaseContracts": [],
       "name": "C",
       "nodeType": "ContractDefinition",
       "nodes": [],
@@ -61,7 +55,6 @@
 },
 {
   "absolutePath": "c",
-  "exportedSymbols": {},
   "id": 24,
   "nodeType": "SourceUnit",
   "nodes":
@@ -71,9 +64,7 @@
       "baseContracts": [],
       "contractDependencies": [],
       "contractKind": "contract",
-      "fullyImplemented": true,
       "id": 23,
-      "linearizedBaseContracts": [],
       "name": "C",
       "nodeType": "ContractDefinition",
       "nodes":
@@ -178,7 +169,6 @@
             "src": "162:25:3",
             "text": "Some comment on fn."
           },
-          "functionSelector": "a4a2c40b",
           "id": 22,
           "implemented": true,
           "kind": "function",

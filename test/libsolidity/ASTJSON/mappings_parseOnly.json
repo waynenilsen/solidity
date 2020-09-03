@@ -1,6 +1,5 @@
 {
   "absolutePath": "a",
-  "exportedSymbols": {},
   "id": 18,
   "nodeType": "SourceUnit",
   "nodes":
@@ -10,15 +9,12 @@
       "baseContracts": [],
       "contractDependencies": [],
       "contractKind": "contract",
-      "fullyImplemented": true,
       "id": 17,
-      "linearizedBaseContracts": [],
       "name": "C",
       "nodeType": "ContractDefinition",
       "nodes":
       [
         {
-          "canonicalName": "",
           "id": 4,
           "members":
           [

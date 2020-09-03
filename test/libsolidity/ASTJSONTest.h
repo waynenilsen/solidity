@@ -52,6 +52,7 @@ private:
 		std::map<std::string, unsigned> const& _sourceIndices,
 		CompilerStack& _compiler,
 		bool _legacy,
+		bool _parseOnly,
 		std::string const& _variation,
 		std::ostream& _stream,
 		std::string const& _linePrefix = "",

@@ -1598,7 +1598,7 @@ void CommandLineInterface::handleCombinedJSON()
 		output[g_strSources] = Json::Value(Json::objectValue);
 		for (auto const& sourceCode: m_sourceCodes)
 		{
-			ASTJsonConverter converter(legacyFormat, m_compiler->sourceIndices());
+			ASTJsonConverter converter(legacyFormat, m_stopAfter == CompilerStack::State::Parsed, m_compiler->sourceIndices());
 			output[g_strSources][sourceCode.first] = Json::Value(Json::objectValue);
 			output[g_strSources][sourceCode.first]["AST"] = converter.toJson(m_compiler->ast(sourceCode.first));
 		}
@@ -1650,7 +1650,7 @@ void CommandLineInterface::handleAst(string const& _argStr)
 			{
 				stringstream data;
 				string postfix = "";
-				ASTJsonConverter(legacyFormat, m_compiler->sourceIndices()).print(data, m_compiler->ast(sourceCode.first));
+				ASTJsonConverter(legacyFormat, m_stopAfter == CompilerStack::State::Parsed, m_compiler->sourceIndices()).print(data, m_compiler->ast(sourceCode.first));
 				postfix += "_json";
 				boost::filesystem::path path(sourceCode.first);
 				createFile(path.filename().string() + postfix + ".ast", data.str());
@@ -1662,7 +1662,7 @@ void CommandLineInterface::handleAst(string const& _argStr)
 			for (auto const& sourceCode: m_sourceCodes)
 			{
 				sout() << endl << "======= " << sourceCode.first << " =======" << endl;
-				ASTJsonConverter(legacyFormat, m_compiler->sourceIndices()).print(sout(), m_compiler->ast(sourceCode.first));
+				ASTJsonConverter(legacyFormat, m_stopAfter == CompilerStack::State::Parsed, m_compiler->sourceIndices()).print(sout(), m_compiler->ast(sourceCode.first));
 			}
 		}
 	}

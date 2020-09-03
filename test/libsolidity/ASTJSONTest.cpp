@@ -160,6 +160,7 @@ TestCase::TestResult ASTJSONTest::run(ostream& _stream, string const& _linePrefi
 		sourceIndices,
 		c,
 		false,
+		true,
 		"parseOnly",
 		_stream,
 		_linePrefix,
@@ -189,6 +190,7 @@ TestCase::TestResult ASTJSONTest::run(ostream& _stream, string const& _linePrefi
 		sourceIndices,
 		c,
 		false,
+		false,
 		"",
 		_stream,
 		_linePrefix,
@@ -201,6 +203,7 @@ TestCase::TestResult ASTJSONTest::run(ostream& _stream, string const& _linePrefi
 		sourceIndices,
 		c,
 		true,
+		false,
 		"legacy",
 		_stream,
 		_linePrefix,
@@ -216,6 +219,7 @@ bool ASTJSONTest::runTest(
 	map<string, unsigned> const& _sourceIndices,
 	CompilerStack& _compiler,
 	bool _legacy,
+	bool _parseOnly,
 	string const& _variation,
 	ostream& _stream,
 	string const& _linePrefix,
@@ -228,7 +232,7 @@ bool ASTJSONTest::runTest(
 	for (size_t i = 0; i < m_sources.size(); i++)
 	{
 		ostringstream result;
-		ASTJsonConverter(_legacy, _sourceIndices).print(result, _compiler.ast(m_sources[i].first));
+		ASTJsonConverter(_legacy, _parseOnly, _sourceIndices).print(result, _compiler.ast(m_sources[i].first));
 		_result += result.str();
 		if (i != m_sources.size() - 1)
 			_result += ",";

@@ -1,6 +1,5 @@
 {
   "absolutePath": "a",
-  "exportedSymbols": {},
   "id": 32,
   "nodeType": "SourceUnit",
   "nodes":
@@ -10,9 +9,7 @@
       "baseContracts": [],
       "contractDependencies": [],
       "contractKind": "contract",
-      "fullyImplemented": true,
       "id": 5,
-      "linearizedBaseContracts": [],
       "name": "A",
       "nodeType": "ContractDefinition",
       "nodes":
@@ -25,7 +22,6 @@
             "src": "36:2:1",
             "statements": []
           },
-          "functionSelector": "a399b6a2",
           "id": 4,
           "implemented": true,
           "kind": "function",
@@ -74,15 +70,12 @@
       ],
       "contractDependencies": [],
       "contractKind": "contract",
-      "fullyImplemented": true,
       "id": 16,
-      "linearizedBaseContracts": [],
       "name": "B",
       "nodeType": "ContractDefinition",
       "nodes":
       [
         {
-          "functionSelector": "c2985578",
           "id": 10,
           "implemented": false,
           "kind": "function",
@@ -116,7 +109,6 @@
             "src": "115:2:1",
             "statements": []
           },
-          "functionSelector": "a399b6a2",
           "id": 15,
           "implemented": true,
           "kind": "function",
@@ -172,9 +164,7 @@
       ],
       "contractDependencies": [],
       "contractKind": "contract",
-      "fullyImplemented": true,
       "id": 31,
-      "linearizedBaseContracts": [],
       "name": "C",
       "nodeType": "ContractDefinition",
       "nodes":
@@ -187,7 +177,6 @@
             "src": "170:3:1",
             "statements": []
           },
-          "functionSelector": "c2985578",
           "id": 23,
           "implemented": true,
           "kind": "function",
@@ -228,7 +217,6 @@
             "src": "212:2:1",
             "statements": []
           },
-          "functionSelector": "a399b6a2",
           "id": 30,
           "implemented": true,
           "kind": "function",
