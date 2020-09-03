@@ -754,7 +754,7 @@ string YulUtilFunctions::arrayLengthFunction(ArrayType const& _type)
 	string functionName = "array_length_" + _type.identifier();
 	return m_functionCollector.createFunction(functionName, [&]() {
 		Whiskers w(R"(
-			function <functionName>(value) -> length {
+			function <functionName>(value<?calldata><?dynamic>, len</dynamic></calldata>) -> length {
 				<?dynamic>
 					<?memory>
 						length := mload(value)
@@ -765,6 +765,9 @@ string YulUtilFunctions::arrayLengthFunction(ArrayType const& _type)
 							length := <extractByteArrayLength>(length)
 						</byteArray>
 					</storage>
+					<?calldata>
+						length := len
+					</calldata>
 				<!dynamic>
 					length := <length>
 				</dynamic>
@@ -776,17 +779,14 @@ string YulUtilFunctions::arrayLengthFunction(ArrayType const& _type)
 			w("length", toCompactHexWithPrefix(_type.length()));
 		w("memory", _type.location() == DataLocation::Memory);
 		w("storage", _type.location() == DataLocation::Storage);
+		w("calldata", _type.location() == DataLocation::CallData);
 		if (_type.location() == DataLocation::Storage)
 		{
 			w("byteArray", _type.isByteArray());
 			if (_type.isByteArray())
 				w("extractByteArrayLength", extractByteArrayLengthFunction());
 		}
-		if (_type.isDynamicallySized())
-			solAssert(
-				_type.location() != DataLocation::CallData,
-				"called regular array length function on calldata array"
-			);
+
 		return w.render();
 	});
 }
@@ -1062,6 +1062,103 @@ string YulUtilFunctions::clearStorageArrayFunction(ArrayType const& _type)
 		("lenToSize", arrayConvertLengthToSize(_type))
 		("len", _type.length().str())
 		.render();
+	});
+}
+
+string YulUtilFunctions::copyArrayToStorage(ArrayType const& _fromType, ArrayType const& _toType)
+{
+	solAssert(
+		*_fromType.copyForLocation(_toType.location(), _toType.isPointer()).get() == dynamic_cast<ReferenceType const&>(_toType),
+		""
+	);
+
+	string functionName = "copy_array_to_storage_from_" + _fromType.identifier() + "_to_" + _toType.identifier();
+	return m_functionCollector.createFunction(functionName, [&](){
+		Whiskers templ(R"(
+			function <functionName>(slot, <value>) {
+				let length := <arrayLength>(<value>)
+				<?isToDynamic>
+					<storeLength>(slot, length)
+				</isToDynamic>
+
+				for { let i := 0 } lt(i, length) {i := add(i, 1)} {
+					let callDataOrMemoryOffset := <fromArrayIndexAccess>(<value>, i)
+					let elementSlot, elementOffset := <toArrayIndexAccess>(slot, i)
+
+					<?fromCalldata>
+						<?isBytes>
+							let <elementValues> := <cleanup>(calldataload(callDataOrMemoryOffset))
+							<updateStorageValue>(elementSlot<?hasOffset>, elementOffset</hasOffset>, <elementValues>)
+						</isBytes>
+						<?isValueType>
+							let <elementValues> := <readFromCalldataOrMemory>(callDataOrMemoryOffset)
+							<updateStorageValue>(elementSlot<?hasOffset>, elementOffset</hasOffset>, <elementValues>)
+						</isValueType>
+						<?isRefType>
+							<updateStorageValue>(elementSlot<?hasOffset>, elementOffset</hasOffset>, callDataOrMemoryOffset)
+						</isRefType>
+					<!fromCalldata>
+						let <elementValues> := <readFromCalldataOrMemory>(callDataOrMemoryOffset)
+						<updateStorageValue>(elementSlot<?hasOffset>, elementOffset</hasOffset>, <elementValues>)
+					</fromCalldata>
+				}
+			}
+		)");
+		templ("functionName", functionName);
+		templ("value", suffixedVariableNameList("value_", 0, _fromType.sizeOnStack()));
+		templ("isToDynamic", _toType.isDynamicallySized());
+		if (_toType.isDynamicallySized())
+			templ("storeLength", storeArrayLengthFunction(_toType));
+		templ("arrayLength",arrayLengthFunction(_fromType));
+		bool fromCalldata = _fromType.location() == DataLocation::CallData;
+		templ("fromArrayIndexAccess",
+			fromCalldata ?
+			calldataArrayIndexAccessFunction(_fromType) :
+			memoryArrayIndexAccessFunction(_fromType)
+		);
+		templ("toArrayIndexAccess", storageArrayIndexAccessFunction(_toType));
+		templ("fromCalldata", fromCalldata);
+		templ("isBytes", _toType.isByteArray());
+		templ("isValueType", !_toType.isByteArray() && _fromType.baseType()->isValueType());
+		templ("isRefType", !_fromType.baseType()->isValueType());
+		if (_fromType.isByteArray() && fromCalldata)
+			templ("cleanup", cleanupFunction(*_fromType.baseType()));
+		if (_fromType.baseType()->isValueType() || !fromCalldata)
+			templ("readFromCalldataOrMemory", readFromMemoryOrCalldata(*_fromType.baseType(), fromCalldata));
+		templ("hasOffset", _toType.baseType()->isValueType());
+		templ("elementValues", suffixedVariableNameList(
+			"elementValue_",
+			0,
+			_fromType.baseType()->stackItems().size()
+		));
+		templ("updateStorageValue", updateStorageValueFunction(*_fromType.baseType(), *_toType.baseType()));
+		return templ.render();
+	});
+}
+
+string YulUtilFunctions::storeArrayLengthFunction(ArrayType const& _type)
+{
+	solAssert(_type.isDynamicallySized(), "");
+	solAssert(_type.location() == DataLocation::Storage, "");
+	string functionName = "array_store_length_" + _type.identifier();
+	return m_functionCollector.createFunction(functionName, [&]() {
+		return Whiskers(R"(
+			function <functionName>(slot, length) {
+				<?isBytes>
+					switch lt(length, 32)
+					case 0 {
+						sstore(slot, add(mul(length, 2), 1))
+					}
+					default {
+						sstore(slot, mul(length, 2))
+					}
+				<!isBytes>
+					sstore(slot, length)
+				</isBytes>
+			})")
+			("functionName", functionName)
+			("isBytes", _type.isByteArray())
+			.render();
 	});
 }
 
@@ -1567,23 +1664,39 @@ string YulUtilFunctions::updateStorageValueFunction(
 		else
 		{
 			auto const* toReferenceType = dynamic_cast<ReferenceType const*>(&_toType);
-			auto const* fromReferenceType = dynamic_cast<ReferenceType const*>(&_toType);
+			auto const* fromReferenceType = dynamic_cast<ReferenceType const*>(&_fromType);
 			solAssert(fromReferenceType && toReferenceType, "");
 			solAssert(*toReferenceType->copyForLocation(
 				fromReferenceType->location(),
 				fromReferenceType->isPointer()
 			).get() == *fromReferenceType, "");
+			solAssert(fromReferenceType->location() != DataLocation::Storage, "");
+			solAssert(toReferenceType->category() == fromReferenceType->category(), "");
 
 			if (_toType.category() == Type::Category::Array)
-				solUnimplementedAssert(false, "");
+			{
+				solAssert(_offset.value_or(0) == 0, "");
+
+				Whiskers templ(R"(
+					function <functionName>(slot, <value>) {
+						<copyArrayToStorage>(slot, <value>)
+					}
+				)");
+				templ("functionName", functionName);
+				templ("value", suffixedVariableNameList("value_", 0, _fromType.sizeOnStack()));
+				templ("copyArrayToStorage", copyArrayToStorage(
+					dynamic_cast<ArrayType const&>(_fromType),
+					dynamic_cast<ArrayType const&>(_toType)
+				));
+
+				return templ.render();
+			}
 			else if (_toType.category() == Type::Category::Struct)
 			{
-				solAssert(_fromType.category() == Type::Category::Struct, "");
 				auto const& fromStructType = dynamic_cast<StructType const&>(_fromType);
 				auto const& toStructType = dynamic_cast<StructType const&>(_toType);
 				solAssert(fromStructType.structDefinition() == toStructType.structDefinition(), "");
-				solAssert(fromStructType.location() != DataLocation::Storage, "");
-				solUnimplementedAssert(_offset.has_value() && _offset.value() == 0, "");
+				solAssert(_offset.value_or(0) == 0, "");
 
 				Whiskers templ(R"(
 					function <functionName>(slot, value) {
@@ -1597,6 +1710,7 @@ string YulUtilFunctions::updateStorageValueFunction(
 				templ("functionName", functionName);
 
 				MemberList::MemberMap structMembers = fromStructType.nativeMembers(nullptr);
+				MemberList::MemberMap toStructMembers = toStructType.nativeMembers(nullptr);
 
 				vector<map<string, string>> memberParams(structMembers.size());
 				for (size_t i = 0; i < structMembers.size(); ++i)
@@ -1617,8 +1731,8 @@ string YulUtilFunctions::updateStorageValueFunction(
 					(
 						"updateMember",
 						structMembers[i].type->isValueType() ?
-							updateStorageValueFunction(*structMembers[i].type, *structMembers[i].type) :
-							updateStorageValueFunction(*structMembers[i].type, *structMembers[i].type, offset)
+							updateStorageValueFunction(*structMembers[i].type, *toStructMembers[i].type) :
+							updateStorageValueFunction(*structMembers[i].type, *toStructMembers[i].type, offset)
 					)
 					("memberStorageSlotDiff", slotDiff.str())
 					("memberStorageOffset", to_string(offset))
