@@ -1,7 +1,7 @@
 ### 0.7.2 (unreleased)
 
 Language Features:
-
+ * Code generator: Implementing copying arrays of structs to storage.
 
 Compiler Features:
  * SMTChecker: Support structs.
