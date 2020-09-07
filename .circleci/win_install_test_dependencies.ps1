@@ -26,21 +26,9 @@
 
 $ProgressPreference = "SilentlyContinue"
 
-$cmake_version = "3.16.4"
-$cmake_url = "https://github.com/Kitware/CMake/releases/download/v${cmake_version}/cmake-${cmake_version}-win64-x64.zip"
-$cmake_archive = "$Env:HOMEPATH\cmake-${cmake_version}-win64-x64.zip"
-
 $evmone_version = "0.5.0"
 $evmone_url = "https://github.com/ethereum/evmone/releases/download/v${evmone_version}/evmone-${evmone_version}-windows-amd64.zip"
 $evmone_archive = "$Env:HOME\evmone.zip"
 
-Invoke-WebRequest -URI "$cmake_url" -OutFile "$cmake_archive"
-Expand-Archive "$cmake_archive" -DestinationPath "$Env:ProgramFiles"
-Rename-Item "$Env:ProgramFiles\cmake-${cmake_version}-win64-x64" -NewName CMake
-$env:Path = "$Env:ProgramFiles\CMake\bin;$env:Path";
-
 Invoke-WebRequest -URI "$evmone_url" -OutFile "$evmone_archive"
 Expand-Archive "$evmone_archive" -DestinationPath evmone
-
-# This will install boost-1.67
-cmake -P scripts\install_deps.cmake

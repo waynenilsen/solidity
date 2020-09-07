@@ -539,7 +539,7 @@ jobs:
       - run: systeminfo
       - run:
           name: "Installing dependencies"
-          command: .\.circleci\win_install_dependencies.ps1
+          command: .\.circleci\win_install_build_dependencies.ps1
       - run:
           name: "Building Solidity"
           command: .\scripts\ci\build_windows.ps1
@@ -562,6 +562,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: build
+      - run:
+          name: "Installing dependencies"
+          command: .\.circleci\win_install_test_dependencies.ps1
       - run:
           name: "Running soltest"
           command: .\build\test\Release\soltest.exe --show-progress -- --testpath .\test --no-smt --evmonepath=evmone\bin\evmone.dll
