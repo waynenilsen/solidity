@@ -37,7 +37,7 @@ if ("$Env:FORCE_RELEASE" -eq "ON") {
 mkdir build
 
 cd build
-cmake .. -G "Visual Studio 16 2019" -DTESTS=ON -DBOOST_ROOT=C:/Libraries/boost_1_73_0
+cmake .. -G "Visual Studio 16 2019" -DCMAKE_BUILD_TYPE=Release -DTESTS=ON -DBOOST_ROOT=C:/Libraries/boost_1_73_0
 cd ..
 
 cmake --build build/ --parallel 5

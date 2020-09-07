@@ -547,11 +547,7 @@ jobs:
           name: "Packaging"
           command: .\scripts\create_package_windows.ps1
       - store_artifacts: *artifact_solc_windows
-      - persist_to_workspace: &artifacts_executables_windows
-          root: build
-          paths:
-            - solc/Release/solc.exe
-            - test/Release/soltest.exe
+      - persist_to_workspace: *artifacts_build_dir
 
   b_win_release:
     <<: *b_win
