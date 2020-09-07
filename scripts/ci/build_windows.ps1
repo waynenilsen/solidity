@@ -35,13 +35,10 @@ if ("$Env:FORCE_RELEASE" -eq "ON") {
 }
 
 mkdir build
-
 cd build
-# We need "Release" to link against boost.
-cmake .. -G "Visual Studio 16 2019" --config Release -DTESTS=ON
+cmake .. -G "Visual Studio 16 2019" -DTESTS=ON
+msbuild solidity.sln /p:Configuration=Release /m:5 /v:minimal
 cd ..
-
-cmake --build build/ --parallel 5
 
 # This is purely for inspecting list of generated executable files during build
 Get-ChildItem -Path build/ -Recurse -Include "*.exe" | Select-Object -ExpandProperty FullName
