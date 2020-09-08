@@ -22,6 +22,7 @@
 #include <libsmtutil/Z3CHCInterface.h>
 #endif
 
+#include <libsolidity/formal/PredicateSort.h>
 #include <libsolidity/formal/SymbolicTypes.h>
 
 #include <libsolidity/ast/TypeProvider.h>
@@ -92,13 +93,10 @@ bool CHC::visit(ContractDefinition const& _contract)
 	initContract(_contract);
 
 	m_stateVariables = SMTEncoder::stateVariablesIncludingInheritedAndPrivate(_contract);
-	m_stateSorts = stateSorts(_contract);
 
 	clearIndices(&_contract);
 
-	string suffix = _contract.name() + "_" + to_string(_contract.id());
-	m_constructorSummaryPredicate = createSymbolicBlock(constructorSort(), "summary_constructor_" + suffix, &_contract);
-	m_implicitConstructorPredicate = createSymbolicBlock(arity0FunctionSort(), "implicit_constructor_" + suffix, &_contract);
+	m_constructorSummaryPredicate = createSymbolicBlock(constructorSort(), "summary_constructor_" + contractSuffix(_contract), &_contract);
 	auto stateExprs = currentStateVariables();
 	setCurrentBlock(*m_interfaces.at(m_currentContract), &stateExprs);
 
@@ -108,7 +106,8 @@ bool CHC::visit(ContractDefinition const& _contract)
 
 void CHC::endVisit(ContractDefinition const& _contract)
 {
-	auto implicitConstructor = (*m_implicitConstructorPredicate)({});
+	auto implicitConstructorPredicate = createSymbolicBlock(smt::implicitConstructorSort(), "implicit_constructor_" + contractSuffix(_contract), &_contract);
+	auto implicitConstructor = (*implicitConstructorPredicate)({});
 	addRule(implicitConstructor, implicitConstructor.name);
 	m_currentBlock = implicitConstructor;
 	m_context.addAssertion(m_error.currentValue() == 0);
@@ -682,7 +681,6 @@ void CHC::resetSourceAnalysis()
 
 void CHC::resetContractAnalysis()
 {
-	m_stateSorts.clear();
 	m_stateVariables.clear();
 	m_unknownFunctionCallSeen = false;
 	m_breakDest = nullptr;
@@ -739,83 +737,27 @@ set<frontend::Expression const*, CHC::IdCompare> CHC::transactionAssertions(ASTN
 	return assertions;
 }
 
-vector<smtutil::SortPointer> CHC::stateSorts(ContractDefinition const& _contract)
-{
-	return applyMap(
-		SMTEncoder::stateVariablesIncludingInheritedAndPrivate(_contract),
-		[](auto _var) { return smt::smtSortAbstractFunction(*_var->type()); }
-	);
-}
-
 smtutil::SortPointer CHC::constructorSort()
 {
 	solAssert(m_currentContract, "");
-	if (auto const* constructor = m_currentContract->constructor())
-		return sort(*constructor);
-
-	return make_shared<smtutil::FunctionSort>(
-		vector<smtutil::SortPointer>{smtutil::SortProvider::uintSort} + m_stateSorts,
-		smtutil::SortProvider::boolSort
-	);
+	return smt::constructorSort(*m_currentContract);
 }
 
 smtutil::SortPointer CHC::interfaceSort()
 {
 	solAssert(m_currentContract, "");
-	return interfaceSort(*m_currentContract);
+	return smt::interfaceSort(*m_currentContract);
 }
 
 smtutil::SortPointer CHC::nondetInterfaceSort()
 {
 	solAssert(m_currentContract, "");
-	return nondetInterfaceSort(*m_currentContract);
+	return smt::nondetInterfaceSort(*m_currentContract);
 }
 
-smtutil::SortPointer CHC::interfaceSort(ContractDefinition const& _contract)
-{
-	return make_shared<smtutil::FunctionSort>(
-		stateSorts(_contract),
-		smtutil::SortProvider::boolSort
-	);
-}
-
-smtutil::SortPointer CHC::nondetInterfaceSort(ContractDefinition const& _contract)
-{
-	auto sorts = stateSorts(_contract);
-	return make_shared<smtutil::FunctionSort>(
-		sorts + sorts,
-		smtutil::SortProvider::boolSort
-	);
-}
-
-smtutil::SortPointer CHC::arity0FunctionSort() const
-{
-	return make_shared<smtutil::FunctionSort>(
-		vector<smtutil::SortPointer>(),
-		smtutil::SortProvider::boolSort
-	);
-}
-
-/// A function in the symbolic CFG requires:
-/// - Index of failed assertion. 0 means no assertion failed.
-/// - 2 sets of state variables:
-///   - State variables at the beginning of the current function, immutable
-///   - Current state variables
-///    At the beginning of the function these must equal set 1
-/// - 2 sets of input variables:
-///   - Input variables at the beginning of the current function, immutable
-///   - Current input variables
-///    At the beginning of the function these must equal set 1
-/// - 1 set of output variables
 smtutil::SortPointer CHC::sort(FunctionDefinition const& _function)
 {
-	auto smtSort = [](auto _var) { return smt::smtSortAbstractFunction(*_var->type()); };
-	auto inputSorts = applyMap(_function.parameters(), smtSort);
-	auto outputSorts = applyMap(_function.returnParameters(), smtSort);
-	return make_shared<smtutil::FunctionSort>(
-		vector<smtutil::SortPointer>{smtutil::SortProvider::uintSort} + m_stateSorts + inputSorts + m_stateSorts + inputSorts + outputSorts,
-		smtutil::SortProvider::boolSort
-	);
+	return smt::functionSort(_function, m_currentContract);
 }
 
 smtutil::SortPointer CHC::sort(ASTNode const* _node)
@@ -823,33 +765,7 @@ smtutil::SortPointer CHC::sort(ASTNode const* _node)
 	if (auto funDef = dynamic_cast<FunctionDefinition const*>(_node))
 		return sort(*funDef);
 
-	auto fSort = dynamic_pointer_cast<smtutil::FunctionSort>(sort(*m_currentFunction));
-	solAssert(fSort, "");
-
-	auto smtSort = [](auto _var) { return smt::smtSortAbstractFunction(*_var->type()); };
-	return make_shared<smtutil::FunctionSort>(
-		fSort->domain + applyMap(m_currentFunction->localVariables(), smtSort),
-		smtutil::SortProvider::boolSort
-	);
-}
-
-smtutil::SortPointer CHC::summarySort(FunctionDefinition const& _function, ContractDefinition const& _contract)
-{
-	auto stateVariables = SMTEncoder::stateVariablesIncludingInheritedAndPrivate(_contract);
-	auto sorts = stateSorts(_contract);
-
-	auto smtSort = [](auto _var) { return smt::smtSortAbstractFunction(*_var->type()); };
-	auto inputSorts = applyMap(_function.parameters(), smtSort);
-	auto outputSorts = applyMap(_function.returnParameters(), smtSort);
-	return make_shared<smtutil::FunctionSort>(
-		vector<smtutil::SortPointer>{smtutil::SortProvider::uintSort} +
-			sorts +
-			inputSorts +
-			sorts +
-			inputSorts +
-			outputSorts,
-		smtutil::SortProvider::boolSort
-	);
+	return smt::functionBodySort(*m_currentFunction, m_currentContract);
 }
 
 Predicate const* CHC::createSymbolicBlock(SortPointer _sort, string const& _name, ASTNode const* _node)
@@ -865,8 +781,8 @@ void CHC::defineInterfacesAndSummaries(SourceUnit const& _source)
 		if (auto const* contract = dynamic_cast<ContractDefinition const*>(node.get()))
 		{
 			string suffix = contract->name() + "_" + to_string(contract->id());
-			m_interfaces[contract] = createSymbolicBlock(interfaceSort(*contract), "interface_" + suffix);
-			m_nondetInterfaces[contract] = createSymbolicBlock(nondetInterfaceSort(*contract), "nondet_interface_" + suffix);
+			m_interfaces[contract] = createSymbolicBlock(smt::interfaceSort(*contract), "interface_" + suffix);
+			m_nondetInterfaces[contract] = createSymbolicBlock(smt::nondetInterfaceSort(*contract), "nondet_interface_" + suffix);
 
 			for (auto const* var: stateVariablesIncludingInheritedAndPrivate(*contract))
 				if (!m_context.knownVariable(*var))
@@ -987,7 +903,7 @@ Predicate const* CHC::createBlock(ASTNode const* _node, string const& _prefix)
 Predicate const* CHC::createSummaryBlock(FunctionDefinition const& _function, ContractDefinition const& _contract)
 {
 	auto block = createSymbolicBlock(
-		summarySort(_function, _contract),
+		smt::functionSort(_function, &_contract),
 		"summary_" + uniquePrefix() + "_" + predicateName(&_function, &_contract),
 		&_function
 	);
@@ -997,7 +913,7 @@ Predicate const* CHC::createSummaryBlock(FunctionDefinition const& _function, Co
 
 void CHC::createErrorBlock()
 {
-	m_errorPredicate = createSymbolicBlock(arity0FunctionSort(), "error_target_" + to_string(m_context.newUniqueId()));
+	m_errorPredicate = createSymbolicBlock(smt::arity0FunctionSort(), "error_target_" + to_string(m_context.newUniqueId()));
 	m_interface->registerRelation(m_errorPredicate->functor());
 }
 
@@ -1496,6 +1412,11 @@ string CHC::cex2dot(smtutil::CHCSolverInterface::CexGraph const& _cex)
 string CHC::uniquePrefix()
 {
 	return to_string(m_blockCounter++);
+}
+
+string CHC::contractSuffix(ContractDefinition const& _contract)
+{
+	return _contract.name() + "_" + to_string(_contract.id());
 }
 
 unsigned CHC::newErrorId(frontend::Expression const& _expr)
