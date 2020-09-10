@@ -64,6 +64,8 @@ Under the following terms:
 
 When using the Solidity logo, please respect the Solidity logo guidelines.
 
+You can download the logo `here <https://github.com/ethereum/solidity/blob/develop/docs/logo.svg>`_.
+
 Solidity Logo Guidelines
 ========================
 
