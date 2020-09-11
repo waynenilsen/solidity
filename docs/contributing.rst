@@ -2,7 +2,7 @@
 Contributing
 ############
 
-Help is always appreciated and there are plenty of options how you can contribute to Solidity.
+Help is always appreciated and there are plenty of ways to contribute to Solidity.
 
 In particular, we appreciate support in the following areas:
 
