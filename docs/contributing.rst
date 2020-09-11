@@ -18,7 +18,7 @@ In particular, we appreciate support in the following areas:
   <https://gitter.im/ethereum/solidity>`_.
 * Getting involved in the language design process by joining language design calls, proposing language changes or new features and providing feedback.
 
-To get started, you can try :ref:`building-from-source` in order to familiarize
+If you wish to contribute code, you can start with :ref:`building-from-source` in order to familiarize
 yourself with the components of Solidity and the build process. Also, it may be
 useful to become well-versed at writing smart-contracts in Solidity.
 
