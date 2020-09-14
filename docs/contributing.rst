@@ -458,7 +458,7 @@ Solidity Language Design
 ========================
 
 If you want to get involved in the language design process and share your ideas, please join the `solidity-users forum <https://groups.google.com/g/solidity-users>`_,
-where proposals for new language features and qualities of existing aspects of the language can be discussed.
+where existing properties of the language and proposals for new language features can be discussed.
 
 We regularly host language design discussion calls, in which selected topics, issues or feature implementations are debated in detail. The invitation
 to those calls is shared via the aforementioned forum. We are also sharing feedback surveys and other language design relevant content in this forum.
@@ -468,6 +468,6 @@ dedicated chatroom for conversations around the Solidity compiler and language d
 
 You can follow the implementation status of new features in the `Solidity Github project <https://github.com/ethereum/solidity/projects/43>`_.
 Issues in the design backlog need further specification and will either be discussed in a language design call or in a regular team call. You can
-see the upcoming changes for the next breaking release by changing from the default branch (`develop`) to the `breaking branch <https://github.com/ethereum/solidity/tree/breaking>`_.
+see the upcoming changes for the next breaking release by switching from the default branch (`develop`) to the `breaking branch <https://github.com/ethereum/solidity/tree/breaking>`_.
 
-We are happy to hear your thoughts on how we can improve the language design process to be even more collaborative and transparent.
+We are happy to hear your thoughts on how we can continuously improve the language design process to be even more collaborative and transparent.
