@@ -779,7 +779,16 @@ void SMTEncoder::visitTypeConversion(FunctionCall const& _funCall)
 	auto argument = _funCall.arguments().front();
 	unsigned argSize = argument->annotation().type->storageBytes();
 	unsigned castSize = _funCall.annotation().type->storageBytes();
-	if (argSize == castSize)
+	// Allow same-size casts as well as literal arguments.
+	// TODO: support StringLiteral
+	if (auto category = argument->annotation().type->category(); category == Type::Category::RationalNumber)
+	{
+		auto const& numberType = dynamic_cast<RationalNumberType const&>(*argument->annotation().type);
+		// TODO: while we can supply the literal here, it is actually not used in RationalNumberType::literalValue()
+		// defineExpr(_funCall, numberType.literalValue(dynamic_cast<Literal const*>(argument.get())));
+		defineExpr(_funCall, numberType.literalValue(nullptr));
+	}
+	else if (argSize == castSize)
 		defineExpr(_funCall, expr(*argument));
 	else
 	{
