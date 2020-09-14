@@ -90,7 +90,7 @@ public:
 	void operator()(Block& _block) override;
 	void visit(Expression& _expression) override;
 private:
-	YulString getMemoryOffset(YulString _variable);
+	YulString memoryOffset(YulString _variable);
 	u256 m_reservedMemory;
 	std::map<YulString, std::map<YulString, uint64_t>> const& m_memorySlots;
 	NameDispenser& m_nameDispenser;

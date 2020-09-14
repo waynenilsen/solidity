@@ -23,7 +23,6 @@
 #include <libsolutil/CommonData.h>
 #include <libsolutil/Visitor.h>
 
-
 using namespace std;
 using namespace solidity;
 using namespace solidity::yul;
@@ -61,6 +60,7 @@ StackToMemoryMover::StackToMemoryMover(
 	);
 
 	if (m_memorySlots.count(YulString{}))
+		// If the global scope contains variables to be moved, start with those as if it were a function.
 		m_currentFunctionMemorySlots = &m_memorySlots.at(YulString{});
 }
 
@@ -108,7 +108,7 @@ void StackToMemoryMover::operator()(Block& _block)
 			appendMemoryStore(
 				result,
 				_loc,
-				getMemoryOffset(_variables.front().name),
+				memoryOffset(_variables.front().name),
 				_value ? *std::move(_value) : Literal{_loc, LiteralKind::Number, "0"_yulstring, {}}
 			);
 			return result;
@@ -123,7 +123,7 @@ void StackToMemoryMover::operator()(Block& _block)
 			tempDecl.variables.emplace_back(TypedName{var.location, tempVarName, {}});
 
 			if (m_currentFunctionMemorySlots->count(var.name))
-				appendMemoryStore(memoryAssignments, _loc, getMemoryOffset(var.name), Identifier{_loc, tempVarName});
+				appendMemoryStore(memoryAssignments, _loc, memoryOffset(var.name), Identifier{_loc, tempVarName});
 			else if constexpr (std::is_same_v<std::decay_t<decltype(var)>, Identifier>)
 				variableAssignments.emplace_back(Assignment{
 					_loc, { Identifier{var.location, var.name} },
@@ -155,8 +155,11 @@ void StackToMemoryMover::operator()(Block& _block)
 					if (!containsVariableNeedingEscalation(_assignment.variableNames))
 						return defaultVisit();
 					visit(*_assignment.value);
-					auto loc = _assignment.location;
-					return {rewriteAssignmentOrVariableDeclaration(loc, _assignment.variableNames, std::move(_assignment.value))};
+					return {rewriteAssignmentOrVariableDeclaration(
+						_assignment.location,
+						_assignment.variableNames,
+						std::move(_assignment.value)
+					)};
 				},
 				[&](VariableDeclaration& _varDecl) -> OptionalStatements
 				{
@@ -164,8 +167,11 @@ void StackToMemoryMover::operator()(Block& _block)
 						return defaultVisit();
 					if (_varDecl.value)
 						visit(*_varDecl.value);
-					auto loc = _varDecl.location;
-					return {rewriteAssignmentOrVariableDeclaration(loc, _varDecl.variables, std::move(_varDecl.value))};
+					return {rewriteAssignmentOrVariableDeclaration(
+						_varDecl.location,
+						_varDecl.variables,
+						std::move(_varDecl.value)
+					)};
 				},
 				[&](auto&) { return defaultVisit(); }
 			}, _statement);
@@ -186,7 +192,7 @@ void StackToMemoryMover::visit(Expression& _expression)
 				Literal {
 					loc,
 					LiteralKind::Number,
-					getMemoryOffset(identifier->name),
+					memoryOffset(identifier->name),
 					{}
 				}
 			}
@@ -196,7 +202,7 @@ void StackToMemoryMover::visit(Expression& _expression)
 		ASTModifier::visit(_expression);
 }
 
-YulString StackToMemoryMover::getMemoryOffset(YulString _variable)
+YulString StackToMemoryMover::memoryOffset(YulString _variable)
 {
 	yulAssert(m_currentFunctionMemorySlots, "");
 	return YulString{util::toCompactHexWithPrefix(m_reservedMemory + 32 * m_currentFunctionMemorySlots->at(_variable))};

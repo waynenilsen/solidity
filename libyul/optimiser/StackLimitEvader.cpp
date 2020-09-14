@@ -48,9 +48,6 @@ namespace
 //   - Assign ``n`` to ``nextAvailableSlot`` of the function.
 struct MemoryOffsetAllocator
 {
-	map<YulString, set<YulString>> const& unreachableVariables;
-	map<YulString, set<YulString>> const& callGraph;
-
 	uint64_t run(YulString _function = YulString{})
 	{
 		if (nextAvailableSlot.count(_function))
@@ -77,13 +74,17 @@ struct MemoryOffsetAllocator
 					assignedSlots[variable] = nextSlot++;
 		}
 
-		return (nextAvailableSlot[_function] = nextSlot);
+		return nextAvailableSlot[_function] = nextSlot;
 	}
+
+	map<YulString, set<YulString>> const& unreachableVariables;
+	map<YulString, set<YulString>> const& callGraph;
 
 	map<YulString, map<YulString, uint64_t>> slotAllocations{};
 	map<YulString, uint64_t> nextAvailableSlot{};
 };
-u256 getLiteralArgumentValue(FunctionCall const& _call)
+
+u256 literalArgumentValue(FunctionCall const& _call)
 {
 	yulAssert(_call.arguments.size() == 1, "");
 	Literal const* literal = std::get_if<Literal>(&_call.arguments.front());
@@ -102,7 +103,7 @@ void StackLimitEvader::run(
 	auto const* evmDialect = dynamic_cast<EVMDialect const*>(&_context.dialect);
 	yulAssert(
 		evmDialect && evmDialect->providesObjectAccess(),
-		"StackToMemoryMover can only be run on objects using the EVMDialect with object access."
+		"StackLimitEvader can only be run on objects using the EVMDialect with object access."
 	);
 
 	vector<FunctionCall*> memoryGuardCalls = FunctionCallFinder::run(
@@ -114,10 +115,10 @@ void StackLimitEvader::run(
 		return;
 
 	// Make sure all calls to ``memoryguard`` we found have the same value as argument (otherwise, abort).
-	u256 reservedMemory = getLiteralArgumentValue(*memoryGuardCalls.front());
+	u256 reservedMemory = literalArgumentValue(*memoryGuardCalls.front());
 	for (FunctionCall const* getFreeMemoryStartCall: memoryGuardCalls)
-			if (reservedMemory != getLiteralArgumentValue(*getFreeMemoryStartCall))
-				return;
+		if (reservedMemory != literalArgumentValue(*getFreeMemoryStartCall))
+			return;
 
 	CallGraph callGraph = CallGraphGenerator::callGraph(*_object.code);
 
