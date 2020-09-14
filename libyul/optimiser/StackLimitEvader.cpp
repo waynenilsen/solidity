@@ -41,11 +41,11 @@ namespace
 //   function that calls it.
 // - For each function starting from the root of the call graph:
 //   - Visit all children that are not already visited.
-//   - Determe the maximum value ``n`` of the values of ``nextAvailableSlot`` among the children.
+//   - Determine the maximum value ``n`` of the values of ``nextAvailableSlot`` among the children.
 //   - If the function itself contains variables that need memory slots, but is contained in a cycle,
 //     abort the process as failure.
-//   - If not, assign each variable its slot starting starting from ``n`` (incrementing it).
-//   - Assign ``nextAvailableSlot`` of the function to ``n``.
+//   - If not, assign each variable its slot starting from ``n`` (incrementing it).
+//   - Assign ``n`` to ``nextAvailableSlot`` of the function.
 struct MemoryOffsetAllocator
 {
 	map<YulString, set<YulString>> const& unreachableVariables;

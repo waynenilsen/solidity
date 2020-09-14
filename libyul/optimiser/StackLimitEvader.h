@@ -41,7 +41,7 @@ struct Object;
  * Offsets are assigned to the variables, s.t. on every path through the call graph each variable gets a unique offset
  * in memory. However, distinct paths through the call graph can use the same memory offsets for their variables.
  *
- * The current argument to the ``memoryguard`` calls are used as base memory offset and then replaced by the offset past
+ * The current arguments to the ``memoryguard`` calls are used as base memory offset and then replaced by the offset past
  * the last memory offset used for a variable on any path through the call graph.
  *
  * Finally, the StackToMemoryMover is called to actually move the variables to their offsets in memory.
@@ -53,7 +53,7 @@ class StackLimitEvader
 public:
 	/// @a _unreachableVariables can be determined by the CompilabilityChecker.
 	/// Can only be run on the EVM dialect with objects.
-	/// Abort and do nothing, if no ``memoryguard`` call or several ``memoryguard`` call
+	/// Abort and do nothing, if no ``memoryguard`` call or several ``memoryguard`` calls
 	/// with non-matching arguments are found, or if any of the @a _unreachableVariables
 	/// are contained in a recursive function.
 	static void run(
