@@ -7,7 +7,7 @@ contract C {
         a++;
         uint256 c = b;
         delete b;
-        a -= 2;
+        unchecked { a -= 2; }
         return (x, c, b, a);
     }
 }

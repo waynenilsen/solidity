@@ -13,7 +13,7 @@ contract C {
         return (2, 3);
     }
     function h(uint x, uint y) public  pure returns (uint) {
-        return x - y;
+        unchecked { return x - y; }
     }
     function i(bool b) public  pure returns (bool) {
         return !b;
