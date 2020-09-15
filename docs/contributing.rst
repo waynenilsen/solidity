@@ -369,7 +369,7 @@ the string parameter ``name`` is non-empty.
 Documentation Style Guide
 =========================
 
-In the following section you find style recommendations specifically focusing on documentation
+In the following section you will find style recommendations specifically focusing on documentation
 contributions to Solidity.
 
 English Language
