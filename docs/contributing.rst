@@ -468,6 +468,6 @@ dedicated chatroom for conversations around the Solidity compiler and language d
 
 You can follow the implementation status of new features in the `Solidity Github project <https://github.com/ethereum/solidity/projects/43>`_.
 Issues in the design backlog need further specification and will either be discussed in a language design call or in a regular team call. You can
-see the upcoming changes for the next breaking release by switching from the default branch (`develop`) to the `breaking branch <https://github.com/ethereum/solidity/tree/breaking>`_.
+see the upcoming changes for the next breaking release by switching from the default branch (``develop``) to the `breaking branch <https://github.com/ethereum/solidity/tree/breaking>`_.
 
 We are happy to hear your thoughts on how we can continuously improve the language design process to be even more collaborative and transparent.
